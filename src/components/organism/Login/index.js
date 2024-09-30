@@ -19,12 +19,6 @@ const Login = () => {
         placeholder="Masukkan password"
       />
       <Button size={"w-full"}>Login</Button>
-      <p className="text-sm text-center mt-2">
-        Don&apos;t have an account?{" "}
-        <Link href="/register" className="text-blue-500 hover:text-blue-700">
-          Register
-        </Link>
-      </p>
     </form>
   );
 };
