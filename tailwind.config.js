@@ -8,10 +8,18 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: "#ffffff",
+        myColor: "#ebcc78",
+      },
+      fontFamily: {
+        poppins: ["Poppins", "sans-serif"],
       },
     },
   },
   plugins: [],
 };
+/**
+ * file tailwind config js file yang dibuat otomatis oleh nextjs saat
+ * instalasi untuk konfigurasi tailwindcss seperti warna custom, gradien,ukuran,dll
+ * detail cek di https://tailwindcss.com/docs/configuration
+ */
