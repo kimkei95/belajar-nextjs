@@ -1,19 +1,25 @@
 import Button from "@/components/atoms/Buttons";
 import CardProduct from "@/components/molecules/CardProducts";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { data } from "@/constants/data";
+import BackToTop from "@/components/atoms/icons/BackToTop";
 
 const ProductPage = () => {
+  //useRef: hooks dari react yg dipake untuk membuat referensi ke elemen DOM
+  const footerRef = useRef();
   const [username, setUsername] = useState("");
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [showBackToTop, setShowBackToTop] = useState(false);
   /**useState: hooks dari react yang memungkinkan kita menambahkan state ke functional component
    * username: variable state yang akan menyimpan nilai username
    * setUsername: fungsi yang dipake buat memperbarui nilai username
    * ""(dalam useState): nilai awal dari state username
    * ketika setUsername dipanggil dengan nilai baru, react merender ulang komponen dengan nilai state yang baru
    */
+
+  //untuk dapetin data dr local storage
   useEffect(() => {
     const getUsername = localStorage.getItem("username");
     if (getUsername) {
@@ -27,13 +33,14 @@ const ProductPage = () => {
    * saat komponen dijalankan pertama kali dirender. jika username ditemukan di localStorage, dia bakan pake setUsername
    * untuk memperbarui nilai state username
    */
+  //event handler untuk logout dan ngapus data dr storage
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("password");
     localStorage.removeItem("cart");
     window.location.href = "/login";
   };
-
+  //event Handler untuk nambahin produk ke cart
   const handleAddToCart = (id) => {
     //jika ada id yang sama maka akan nambahin qty+1
     if (cart.find((item) => item.id === id)) {
@@ -47,6 +54,7 @@ const ProductPage = () => {
       setCart([...cart, { id, qty: 1 }]);
     }
   };
+  //use effect untuk ngitung total harga dan menyimpan data cart ke localStorage
   useEffect(() => {
     if (cart.length > 0) {
       const sum = cart.reduce((total, item) => {
@@ -57,6 +65,38 @@ const ProductPage = () => {
       localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart]);
+
+  //use effect untuk handle tombol back to top
+  useEffect(() => {
+    function handleScroll() {
+      //untuk ambil nilai offsettop posisi vertikal dari elemen footer yang diakses footerRef
+      const footerTop = footerRef.current.offsetTop;
+      //untuk ambil tinggi objek window/tampilan viewport(tanpa toolbaar)
+      const viewPortHeight = window.innerHeight;
+      //untuk ambil nilai sumbu y(vertikal)
+      const scrollPosition = window.scrollY;
+      //cek jika posisi scroll dilayar sudah sampai footer
+      if (scrollPosition + viewPortHeight >= footerTop) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
+    }
+    //event listener untuk ngecek scroll
+
+    //fungsi handleScroll akan dijalanin pada saat event scroll terjadi
+    window.addEventListener("scroll", handleScroll);
+    //kembalikan fungsi yang akan dijalankan saat layar berhenti discroll
+    return () => {
+      //hapus event listener pada event scroll ketika scroll berhenti
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [footerRef]); //<-[footerRef] dipantau setiap kali ada perubahan
+
+  const handleBackToTop = () => {
+    //scroll layar keatas dengan animasi smooth
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -137,6 +177,21 @@ const ProductPage = () => {
           </div>
         )}
       </div>
+      {showBackToTop && (
+        <div
+          onClick={handleBackToTop}
+          className="fixed right-5 bottom-20 bg-blue-500 p-2 rounded-full"
+        >
+          <BackToTop />
+        </div>
+      )}
+
+      <footer
+        ref={footerRef}
+        className="text-center p-5 bg-gray-800 text-white w-full"
+      >
+        Copyright by Akmal
+      </footer>
     </>
   );
 };
