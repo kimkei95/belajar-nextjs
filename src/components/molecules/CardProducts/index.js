@@ -1,4 +1,5 @@
 import Button from "@/components/atoms/Buttons";
+import Image from "next/image";
 import React from "react";
 
 /*
@@ -14,7 +15,15 @@ function CardProduct({ children }) {
 }
 //header
 function Header({ image }) {
-  return <img src={image} alt={image} className="p-4 rounded-t-lg" />;
+  return (
+    <Image
+      width={500}
+      height={500}
+      src={image}
+      alt={image}
+      className="p-4 rounded-t-lg"
+    />
+  );
 }
 //body
 function Body({ title, desc }) {
@@ -26,13 +35,16 @@ function Body({ title, desc }) {
   );
 }
 //footer
-function Footer({ price }) {
+function Footer({ price, onClick }) {
   return (
     <div className="flex flex-col items-center justify-center px5 pb-5">
       <span className="text-2xl font-semibold mb-2">Harga: Rp.{price}</span>
-      <Button size={"w-full"} color="bg-blue-500">
-        Buy
-      </Button>
+      <Button
+        size={"w-full"}
+        color="bg-blue-500"
+        textButton="Buy"
+        onClick={onClick}
+      />
     </div>
   );
 }

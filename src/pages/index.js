@@ -1,6 +1,3 @@
-/*file index js dibuat secara otomatis di folder src/pages.
-file ini akan menjadi halaman utama di aplikasi next js*/
-
 import Button from "@/components/atoms/Buttons";
 
 import Card from "@/components/molecules/CardWithChildren";
