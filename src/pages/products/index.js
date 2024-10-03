@@ -1,7 +1,13 @@
 import Button from "@/components/atoms/Buttons";
 import CardProduct from "@/components/molecules/CardProducts";
 import Image from "next/image";
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { data } from "@/constants/data";
 import BackToTop from "@/components/atoms/icons/BackToTop";
 
@@ -12,6 +18,14 @@ const ProductPage = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
   const [showBackToTop, setShowBackToTop] = useState(false);
+  const [search, setSearch] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  const searchProduct = useMemo(() => {
+    return data.filter((product) =>
+      product.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search]);
   /**useState: hooks dari react yang memungkinkan kita menambahkan state ke functional component
    * username: variable state yang akan menyimpan nilai username
    * setUsername: fungsi yang dipake buat memperbarui nilai username
@@ -40,20 +54,26 @@ const ProductPage = () => {
     localStorage.removeItem("cart");
     window.location.href = "/login";
   };
-  //event Handler untuk nambahin produk ke cart
-  const handleAddToCart = (id) => {
-    //jika ada id yang sama maka akan nambahin qty+1
-    if (cart.find((item) => item.id === id)) {
-      setCart(
-        cart.map((item) =>
-          item.id === id ? { ...item, qty: item.qty + 1 } : item
-        )
-      );
-    } else {
-      //kalo qty data cmn 1 maka akan di set 1qty-nya
-      setCart([...cart, { id, qty: 1 }]);
-    }
-  };
+  //event Handler diganti ke use call back
+  /**usecallback: hooks yang dipake buat nyimpen fungsi di cache agar fungsinya hanya dijalankan
+   * ketika ada perubaha npada nilai fungsi tersebut
+   */
+  const handleAddToCart = useCallback(
+    (id) => {
+      //jika ada id yang sama maka akan nambahin qty+1
+      if (cart.find((item) => item.id === id)) {
+        setCart(
+          cart.map((item) =>
+            item.id === id ? { ...item, qty: item.qty + 1 } : item
+          )
+        );
+      } else {
+        //kalo qty data cmn 1 maka akan di set 1qty-nya
+        setCart([...cart, { id, qty: 1 }]);
+      }
+    },
+    [cart]
+  );
   //useMemo untuk menghitung total harga cart dan menyimpan hasil perhitungannya ke cache
   /**usememo: hook untuk menyimpan hasil komputasi di cache
    * agar tidak perlu dijalankan ulang ketika tidak ada perubahan
@@ -110,6 +130,31 @@ const ProductPage = () => {
     <>
       <div className="flex justify-between items-center bg-blue-500 px-5 py-4">
         <h1 className="text-xl">Welcome, {username}</h1>
+        <div className="w-[300px]">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="py-2 px-4 rounded-full w-[300px]"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              if (e.target.value !== "") {
+                setShowSearch(true);
+              } else {
+                setShowSearch(false);
+              }
+            }}
+          />
+          {showSearch && searchProduct.length > 0 && (
+            <ul className="absolute bg-white text-black w-[300px] mt-1 py-2 px-3 rounded-lg">
+              {searchProduct.map((product) => (
+                <li key={product.id} className="my-1">
+                  {product.name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
         <Button color="bg-red-500" textButton="Logout" onClick={handleLogout} />
       </div>
       <div className="flex px-5 py-4">
