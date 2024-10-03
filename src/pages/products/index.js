@@ -1,7 +1,7 @@
 import Button from "@/components/atoms/Buttons";
 import CardProduct from "@/components/molecules/CardProducts";
 import Image from "next/image";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { data } from "@/constants/data";
 import BackToTop from "@/components/atoms/icons/BackToTop";
 
@@ -54,14 +54,22 @@ const ProductPage = () => {
       setCart([...cart, { id, qty: 1 }]);
     }
   };
+  //useMemo untuk menghitung total harga cart dan menyimpan hasil perhitungannya ke cache
+  /**usememo: hook untuk menyimpan hasil komputasi di cache
+   * agar tidak perlu dijalankan ulang ketika tidak ada perubahan
+   * dalam kasus ini, usememo untuk nyimpen hasil total cart di cache sehingga ketika halaman di refresh
+   * total cart ga di itung ulang kalo nilai ga berubah
+   */
+  const cartTotal = useMemo(() => {
+    return cart.reduce((total, item) => {
+      const product = data.find((product) => product.id === item.id);
+      return total + product.price * item.qty;
+    }, 0);
+  }, [cart]);
+
   //use effect untuk ngitung total harga dan menyimpan data cart ke localStorage
   useEffect(() => {
     if (cart.length > 0) {
-      const sum = cart.reduce((total, item) => {
-        const product = data.find((product) => product.id === item.id);
-        return total + product.price * item.qty;
-      }, 0);
-      setTotal(sum);
       localStorage.setItem("cart", JSON.stringify(cart));
     }
   }, [cart]);
@@ -168,7 +176,7 @@ const ProductPage = () => {
             <div className="flex justify-between px-4 py-2 border mt-2">
               <span className="font-semibold">total</span>
               <span className="font-semibold">
-                {total.toLocaleString("id-ID", {
+                {cartTotal.toLocaleString("id-ID", {
                   style: "currency",
                   currency: "IDR",
                 })}
