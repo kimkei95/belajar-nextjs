@@ -13,8 +13,9 @@ import { getProducts } from "@/services/products";
 
 import useLogin from "@/hooks/useLogin";
 import formatCurrency from "@/helpers/utils/formatCurrency";
+import { setLazyProp } from "next/dist/server/api-utils";
 
-const ProductPage = () => {
+const ProductPage = ({ products }) => {
   //useRef: hooks dari react yg dipake untuk membuat referensi ke elemen DOM
   const footerRef = useRef();
   const username = useLogin();
@@ -23,20 +24,7 @@ const ProductPage = () => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
-  const [products, setProducts] = useState([]); //state untuk nyimpen data dari API
 
-  //use effect untuk memanggil getProducts
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        const dataProduct = await getProducts();
-        setProducts(dataProduct.slice(0, 8));
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchProducts();
-  }, []);
   const searchProduct = useMemo(() => {
     return products.filter((product) =>
       product.title.toLowerCase().includes(search.toLowerCase())
@@ -258,5 +246,22 @@ const ProductPage = () => {
     </>
   );
 };
+/**Server side rendering: teknik memuat halaman yang dimana proses rendering tersebut
+ * dilakukan di sisi server, lalu dikirim ke client hasil render webnya.
+ * teknik ini bermanfaat untuk meningkatkan performa website
+ */
+export async function getServerSideProps() {
+  try {
+    const products = await getProducts();
+    const slicedProducts = products.slice(0, 8);
+    return {
+      props: {
+        products: slicedProducts || [],
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export default ProductPage;
