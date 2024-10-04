@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  //images.remotepatterns untuk memberikan izin untuk menggunakan gambar dari sumber eksternal
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "fakestoreapi.com",
+        pathname: "*/**/*",
+      },
+    ],
+  },
   // basePath: "/home", //<-- basePathe dipake untuk ngubah url halaman utama
 };
 
