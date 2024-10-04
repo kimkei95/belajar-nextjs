@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import BackToTop from "@/components/atoms/icons/BackToTop";
 import { getProducts } from "@/services/products";
+import { getUsername } from "@/services/auth";
 
 const ProductPage = () => {
   //useRef: hooks dari react yg dipake untuk membuat referensi ke elemen DOM
@@ -48,9 +49,11 @@ const ProductPage = () => {
 
   //untuk dapetin data dr local storage
   useEffect(() => {
-    const getUsername = localStorage.getItem("username");
-    if (getUsername) {
-      setUsername(getUsername);
+    const token = localStorage.getItem("token");
+    if (token) {
+      setUsername(getUsername(token));
+    } else {
+      window.location.href = "/login";
     }
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);

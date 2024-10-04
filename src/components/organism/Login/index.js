@@ -2,20 +2,30 @@ import Button from "@/components/atoms/Buttons";
 import InputForm from "@/components/molecules/InputForm";
 import Link from "next/link";
 import React from "react";
+import { login } from "@/services/auth";
 
 const Login = () => {
   //handle login
-  const handleLogin = (event) => {
-    event.preventDefault(); //untuk mencegah halaman agar tidak refresh saat fungsi di trigger
-    console.log("Login");
-    //event target xxx value: buat ngambil data dalam inputan
-    console.log(event.target.username.value);
-    console.log(event.target.password.value);
-
-    window.location.href = "/products"; // window location href: untuk arahin ke halaman lain
-    //localstorage.setitem: buat nyimpen data inputan form ke dalam penyimpanan lokal browser
-    localStorage.setItem("username", event.target.username.value);
-    localStorage.setItem("password", event.target.password.value);
+  const handleLogin = async (event) => {
+    event.preventDefault();
+    //payload buat ambil data dari input form untuk dikirim ke service
+    const payload = {
+      username: event.target.username.value,
+      password: event.target.password.value,
+    };
+    //panggil service login
+    try {
+      const response = await login(payload);
+      //cek token kalo ga ada token bakal diarahin ke halaman login
+      if (response.status) {
+        localStorage.setItem("token", response.token);
+        window.location.href = "/products";
+      } else {
+        console.log("login failed", response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <form onSubmit={handleLogin} className="flex flex-col gap-4">
