@@ -251,9 +251,26 @@ const ProductPage = ({ products }) => {
  * teknik ini bermanfaat untuk meningkatkan performa website
  */
 export async function getServerSideProps() {
+  //cara pertama untuk memanggil service satu satu
+  //   try {
+  //     const products = await getProducts();
+  //     const slicedProducts = products.slice(0, 8);
+  //     return {
+  //       props: {
+  //         products: slicedProducts || [],
+  //       },
+  //     };
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+
+  //cara manggil service sekaligus
+  //contoh: const [productResults, userLogin]=await Promise.all([getProducts(),login()])
   try {
+    const [productResults] = await Promise.all([getProducts()]);
+    const slicedProducts = productResults.slice(0, 8);
     const products = await getProducts();
-    const slicedProducts = products.slice(0, 8);
+
     return {
       props: {
         products: slicedProducts || [],
