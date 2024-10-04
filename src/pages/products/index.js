@@ -12,7 +12,7 @@ import BackToTop from "@/components/atoms/icons/BackToTop";
 import { getProducts } from "@/services/products";
 
 import useLogin from "@/hooks/useLogin";
-import formatCurrency from "@/utils/formatCurrency";
+import formatCurrency from "@/helpers/utils/formatCurrency";
 
 const ProductPage = () => {
   //useRef: hooks dari react yg dipake untuk membuat referensi ke elemen DOM
