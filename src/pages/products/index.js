@@ -246,26 +246,15 @@ const ProductPage = ({ products }) => {
     </>
   );
 };
-/**Server side rendering: teknik memuat halaman yang dimana proses rendering tersebut
- * dilakukan di sisi server, lalu dikirim ke client hasil render webnya.
- * teknik ini bermanfaat untuk meningkatkan performa website
+/**static side generation: teknik yang memuat halaman website pada saat proses build time(next build)
+ * dan halaman websitenya bisa di cache sehingga ketika user kembali ke halaman dengan SSG
+ * proses memuatnya lebih cepat.
+ * teknik ini di khususkan untuk halaman websiite yang datanya statis atau tidak berubah-ubah
+ *
+ * build time: adalah proses penyiapan aplikasi disisi server saat di deploy
+ * run time: proses setelah build dimana aplikasi dijalanin di browser
  */
-export async function getServerSideProps() {
-  //cara pertama untuk memanggil service satu satu
-  //   try {
-  //     const products = await getProducts();
-  //     const slicedProducts = products.slice(0, 8);
-  //     return {
-  //       props: {
-  //         products: slicedProducts || [],
-  //       },
-  //     };
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  //cara manggil service sekaligus
-  //contoh: const [productResults, userLogin]=await Promise.all([getProducts(),login()])
+export async function getStaticProps() {
   try {
     const [productResults] = await Promise.all([getProducts()]);
     const slicedProducts = productResults.slice(0, 8);
