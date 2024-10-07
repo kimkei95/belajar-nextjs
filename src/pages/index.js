@@ -1,10 +1,12 @@
 import Button from "@/components/atoms/Buttons";
+import CardProduct from "@/components/molecules/CardProducts";
 
 import Card from "@/components/molecules/CardWithChildren";
 import { isMobileScreenAtom } from "@/jotai/atoms";
+import { getEvents } from "@/services/events";
 import { useAtom } from "jotai";
 
-export default function Home() {
+export default function Home({ events }) {
   const [isMobileScreen] = useAtom(isMobileScreenAtom);
   console.log(isMobileScreen);
 
@@ -16,35 +18,26 @@ export default function Home() {
         <h1>ini halaman desktop</h1>
       )}
       <Button />
-
-      {!isMobileScreen && (
-        <>
-          <Card cardClassName={"p-4"}>
-            <h2 className="text-xl font-bold my-3">Card Title</h2>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-          </Card>
-          <Card cardClassName={"p-2"}>
-            <h2 className="text-xl font-bold my-3">Card Title 2</h2>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-          </Card>
-        </>
-      )}
+      <div className="flex gap-6">
+        {events.map((item) => (
+          <CardProduct key={item.id}>
+            <CardProduct.Body title={item.title} desc={item.participant} />
+            {item.location}
+          </CardProduct>
+        ))}
+      </div>
     </div>
   );
+}
+export async function getServerSideProps() {
+  try {
+    const [eventResult] = await Promise.all([getEvents()]);
+    return {
+      props: {
+        events: eventResult?.content,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }

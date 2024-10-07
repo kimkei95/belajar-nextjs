@@ -14,6 +14,7 @@ import { getProducts } from "@/services/products";
 import useLogin from "@/hooks/useLogin";
 import formatCurrency from "@/helpers/utils/formatCurrency";
 import { setLazyProp } from "next/dist/server/api-utils";
+import Modal from "@/components/Modal";
 
 const ProductPage = ({ products }) => {
   //useRef: hooks dari react yg dipake untuk membuat referensi ke elemen DOM
@@ -24,6 +25,7 @@ const ProductPage = ({ products }) => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const searchProduct = useMemo(() => {
     return products.filter((product) =>
@@ -43,13 +45,10 @@ const ProductPage = ({ products }) => {
 
     setCart(JSON.parse(localStorage.getItem("cart")) || []);
   }, []);
-  /**useEffect(()=>{},[]): hooks dari react yang memungkinkan kita untuk menambahkan side effect ke functional component
-   * useEffect diapke untuk memperbarui komponen ketika ada perubahan pada state
-   * [](array kosong depedency array): argumen kedua milik useEffect yang artinya  efek ini akan dijalankan sekali
-   * saat komponen dijalankan pertama kali dirender. jika username ditemukan di localStorage, dia bakan pake setUsername
-   * untuk memperbarui nilai state username
-   */
-  //event handler untuk logout dan ngapus data dr storage
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
   const handleLogout = () => {
     localStorage.removeItem("username");
     localStorage.removeItem("password");
@@ -161,7 +160,16 @@ const ProductPage = ({ products }) => {
             </ul>
           )}
         </div>
-        <Button color="bg-red-500" textButton="Logout" onClick={handleLogout} />
+        <Button
+          color="bg-red-500"
+          textButton="Logout"
+          onClick={() => {
+            setShowModal(true);
+          }}
+        />
+        {showModal && (
+          <Modal handleClose={handleClose} handleLogout={handleLogout} />
+        )}
       </div>
       <div className="flex px-5 py-4">
         <div className="flex flex-col">
