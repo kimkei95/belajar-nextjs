@@ -246,13 +246,9 @@ const ProductPage = ({ products }) => {
     </>
   );
 };
-/**static side generation: teknik yang memuat halaman website pada saat proses build time(next build)
- * dan halaman websitenya bisa di cache sehingga ketika user kembali ke halaman dengan SSG
- * proses memuatnya lebih cepat.
- * teknik ini di khususkan untuk halaman websiite yang datanya statis atau tidak berubah-ubah
- *
- * build time: adalah proses penyiapan aplikasi disisi server saat di deploy
- * run time: proses setelah build dimana aplikasi dijalanin di browser
+/**incremental static generation: teknik yang menggabungkan SSR dan SSG , dimana teknik ini
+ * memumat halaman website secara statis namun halamannya bisa diupdate secara dinamis
+ * jika ada perubahan data
  */
 export async function getStaticProps() {
   try {
@@ -264,6 +260,7 @@ export async function getStaticProps() {
       props: {
         products: slicedProducts || [],
       },
+      revalidate: 60, //revalidate akan mengupdate data sesuai dengan waktu yang ditentukan
     };
   } catch (error) {
     console.log(error);
