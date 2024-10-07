@@ -1,12 +1,11 @@
 import Button from "@/components/atoms/Buttons";
 
 import Card from "@/components/molecules/CardWithChildren";
-import { useSelector } from "react-redux";
+import { isMobileScreenAtom } from "@/jotai/atoms";
+import { useAtom } from "jotai";
 
 export default function Home() {
-  const { isMobileScreen, isLargeScreen } = useSelector(
-    (state) => state.screen
-  );
+  const [isMobileScreen] = useAtom(isMobileScreenAtom);
   console.log(isMobileScreen);
 
   return (
