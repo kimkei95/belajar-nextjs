@@ -177,7 +177,7 @@ const ProductPage = ({ products }) => {
           {/* products */}
           <div className="flex flex-wrap gap-4">
             {products.map((item) => (
-              <CardProduct key={item.id}>
+              <CardProduct key={item.id} link={`/products/${item.id}`}>
                 <CardProduct.Header image={item.image} />
                 <CardProduct.Body title={item.title} desc={item.description} />
                 <CardProduct.Footer
